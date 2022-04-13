@@ -15,6 +15,7 @@ class DetailFragment : Fragment() {
 
     private lateinit var v : View
     private lateinit var txtRecipe : TextView
+    private lateinit var txtAuthor : TextView
     private lateinit var recipe : Recipe
 
     companion object {
@@ -29,6 +30,7 @@ class DetailFragment : Fragment() {
     ): View? {
         v = inflater.inflate(R.layout.detail_fragment, container, false)
         txtRecipe = v.findViewById(R.id.txtRecipe)
+        txtAuthor = v.findViewById(R.id.txtAuthor)
         return v
     }
 
@@ -37,6 +39,8 @@ class DetailFragment : Fragment() {
 
         recipe = DetailFragmentArgs.fromBundle(requireArguments()).recipeMsg
         txtRecipe.text = recipe.receta
+        txtAuthor.text = "Autor: " + recipe.author
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

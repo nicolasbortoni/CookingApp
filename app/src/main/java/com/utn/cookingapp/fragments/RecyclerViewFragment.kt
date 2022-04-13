@@ -51,7 +51,7 @@ class RecyclerViewFragment : Fragment() {
         }
     }
     fun onItemClick(pos : Int){
-        val action = RecyclerViewFragmentDirections.actionRecyclerViewFragmentToDetailFragment()
+        val action = RecyclerViewFragmentDirections.actionRecyclerViewFragmentToDetailFragment(recipeRepository.getRecipes()[pos])
         v.findNavController().navigate(action)
     }
 

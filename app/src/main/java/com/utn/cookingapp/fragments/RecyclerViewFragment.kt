@@ -46,7 +46,7 @@ class RecyclerViewFragment : Fragment() {
 
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = RecipeAdapter(recipeRepository.getRecipes()){ index ->
+        recyclerView.adapter = RecipeAdapter(recipeRepository.getRecipes(),requireContext()){ index ->
             onItemClick(index)
         }
     }

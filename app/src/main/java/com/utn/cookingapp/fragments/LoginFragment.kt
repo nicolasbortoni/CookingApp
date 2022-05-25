@@ -1,6 +1,5 @@
 package com.utn.cookingapp.fragments
 
-import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,29 +8,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.utn.cookingapp.R
-import com.utn.cookingapp.entities.User
-import com.utn.cookingapp.entities.UserRepository
 import com.utn.cookingapp.viewmodels.LoginViewModel
 
 class LoginFragment : Fragment() {
 
-    private var userRepository : UserRepository = UserRepository()
-
     private lateinit var v : View
+    private lateinit var viewModel: LoginViewModel
 
     private lateinit var usrPlainText : EditText
     private lateinit var pswPlainText : EditText
     private lateinit var loginBtn : Button
-
+    private lateinit var createUserBtn : Button
 
     companion object {
         fun newInstance() = LoginFragment()
     }
-
-    private lateinit var viewModel: LoginViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +35,7 @@ class LoginFragment : Fragment() {
 
         usrPlainText = v.findViewById(R.id.usrPlainText)
         pswPlainText = v.findViewById(R.id.pswPlainText)
+        createUserBtn = v.findViewById(R.id.btnCreateUser)
         loginBtn = v.findViewById(R.id.btnLogin)
 
         return v
@@ -49,32 +44,27 @@ class LoginFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        var usrAux : User
+        val action1 = LoginFragmentDirections.actionLoginFragmentToRecyclerViewFragment()
+
+        viewModel.navigate.observe(viewLifecycleOwner, Observer { result ->
+            when{
+                result == true -> v.findNavController().navigate(action1)
+
+                else -> 0
+            }
+        })
 
         loginBtn.setOnClickListener {
-
-            var usrAux = userRepository.usrList.find { it.user == usrPlainText.text.toString() }
-
-            if (usrAux == null) {
-                Snackbar.make(v,"Nombre de usuario inválido", Snackbar.LENGTH_SHORT).show()
-                usrPlainText.text = null
-                pswPlainText.text = null
-                usrPlainText.setHintTextColor(Color.parseColor("#ff0b16"))
-            }
-            else{
-                if(usrAux.pass == pswPlainText.text.toString()){
-                    usrPlainText.text = null
-                    pswPlainText.text = null
-                    val action = LoginFragmentDirections.actionLoginFragmentToRecyclerViewFragment()
-                    v.findNavController().navigate(action)
-                }
-                else{
-                    Snackbar.make(v,"Contraseña incorrecta", Snackbar.LENGTH_SHORT).show()
-                    pswPlainText.text = null
-                    pswPlainText.setHintTextColor(Color.parseColor("#ff0b16"))
-                }
-            }
+            viewModel.user.value = usrPlainText.text.toString()
+            viewModel.pass.value = pswPlainText.text.toString()
+            viewModel.login()
         }
+
+        createUserBtn.setOnClickListener {
+            val action2 = LoginFragmentDirections.actionLoginFragmentToAddUserFragment()
+            v.findNavController().navigate(action2)
+        }
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

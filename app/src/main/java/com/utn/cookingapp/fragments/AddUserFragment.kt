@@ -8,7 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.utn.cookingapp.R
+import com.utn.cookingapp.entities.User
 import com.utn.cookingapp.viewmodels.AddUserViewModel
 
 class AddUserFragment : Fragment() {
@@ -40,8 +44,20 @@ class AddUserFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        val db = Firebase.firestore
 
+        createBtn.setOnClickListener {
+            val usrAux = User(userPlainText.text.toString(),passPlainText.text.toString())
 
+            db.collection("Users")
+                .add(usrAux)
+                .addOnSuccessListener { documentReference ->
+                    Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(),"Failed",Toast.LENGTH_LONG).show()
+                }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
